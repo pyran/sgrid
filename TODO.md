@@ -1,0 +1,1 @@
+1) Get the basic functions up and running: inventory, examine items, exit, combining etc
