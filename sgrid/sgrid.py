@@ -2,18 +2,19 @@
 
 from gameobjs import Location
 from gameobjs import Player
-#from gameobjs import Item
-
+from gameobjs import Item
+import json
 
 HEADING = \
-"""This is a 2 room demo. Spoiler, you can only go north and south.
-you can also use the examine/look command"""
+"""\n*****This is a 2 location demo. You can only go north/south, look, look item, 
+open item, close item, take item, take 'nestedItem' from 'containerItem',
+inventory and quit. Not all items can be opened, or taken.*****\n"""
 
 # Function to run the game
 def run_game(player):
     print(HEADING)
-    global playing
-    while playing:
+    player.getCurrLoc().printFirst()
+    while True:
         reply = input('\n>').lower().split(';') or ['']
         first = True
         for i in reply:
@@ -21,23 +22,65 @@ def run_game(player):
                 print('\n>')
             player.execprint(i)
             first = False
+
     if __name__ == '__main__':
         input('\n>')
 
 if __name__ == '__main__':
     # Test code
-    playing = True
-    Loc2 = Location('Room 2', 'a big ass ROOM', 'wow such big')
-    Loc = Location('Room 1', 'a small ass ROOM', 'wow such small')
-    # stick = Item('stick', 'a nice sized stick', 'such small stick')
-    # ball = Item('ball', 'a big ball', 'first ball ever')
-    # Loc.addInv(stick)
-    # Loc2.addInv(ball)
+    twig = Item('twig', 'a nice sized twig', 'hmm... a twig',
+                    ['wood', 'twig', 'stick'])
+    berries = Item('berries', 'two small berries', 'two tiny berries', 
+                    ['round', 'circles','berry', 'berries, balls'])
+
+    undies = Item('undies', 'white undies', 'white undies with skid-marks', 
+                    ['underwear', 'undies', 'boxers'], True)
+    chest = Item('chest', 'an ornate chest', 'a beautiful crusty chest',
+                    ['chest', 'box', 'container'], True, False, 
+                    "This thing is heavy. I ain't takin' it no where. ")
+    sword = Item("sword", 'a small sword', 'a tiny sword made for tiny dudes',
+                    ['sword', 'needle', 'prick', 'knife', 'dagger'])
+    note = Item("note", 
+        """The note says:
+        Hi Dick,
+
+        I hope you enjoyed playing with yourself.
+
+        -Dick""",
+        "This note looks familiar... it may warrant another inspection.",
+        ['note', 'letter', 'message', 'paper'])
+    
+    undies.addInv(twig)
+    undies.addInv(berries)
+    chest.addInv(note)
+    caveInv = [chest]
+    clearingInv = [sword]
+
+    Cave = Location('Cave', 
+        'A dimly lit cave. You can see a clearing South of here.', 
+        'This cave sucks.', caveInv)
+    Clearing = Location('Clearing', 
+        'This clearing looks stupid. It looks as if there is a cave North of here.', 
+        'You are in an expansive clearing. It looks as if there is a cave North of here.', clearingInv)
+    
     dungeon_map = {
-    Loc:  {'north': Loc2},
-    Loc2: {'south': Loc}
+    Clearing:  {'north': Cave},
+    Cave: {'south': Clearing}
     }
+
     gameItems = {}
-    hero = Player("Brian", "Asian Brian", "Whoa", Loc, dungeon_map)
+    hero = Player("Dick", "I am a detective with a phallic name.", 
+        "Whoa, I can see myself.", Clearing, dungeon_map)
+    hero.addInv(undies)
+
+    # myVar = {'name':'Room 2', 'description':'a big ass ROOM.', 
+    # 'firstDescription':'wow such big.'}
+    # testFile = open("/home/brian/testfile", 'r')
+    #testFile.write(json.dumps(myVar))
+
+    # newVar = json.load(testFile)
+    # testFile.close()
+    # print(newVar)
+
     # Maybe can add a look self
     run_game(hero)
