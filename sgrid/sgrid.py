@@ -1,8 +1,8 @@
 # /usr/bin/env python3
 
-from gameobjs import Location
-from gameobjs import Player
-from gameobjs import Item
+from sgrid.location import Location
+from sgrid.player import Player
+from sgrid.item import Item
 import json
 
 HEADING = \
@@ -34,10 +34,10 @@ if __name__ == '__main__':
                     ['round', 'circles','berry', 'berries, balls'])
 
     undies = Item('undies', 'white undies', 'white undies with skid-marks', 
-                    ['underwear', 'undies', 'boxers'], True)
+                    ['underwear', 'undies', 'boxers'], is_container = True)
     chest = Item('chest', 'an ornate chest', 'a beautiful crusty chest',
-                    ['chest', 'box', 'container'], True, False, 
-                    "This thing is heavy. I ain't takin' it no where. ")
+                    ['chest', 'box', 'container'], is_container = True, can_take = False, 
+                    cannot_take_msg = "This thing is heavy. I ain't takin' it no where. ")
     sword = Item("sword", 'a small sword', 'a tiny sword made for tiny dudes',
                     ['sword', 'needle', 'prick', 'knife', 'dagger'])
     note = Item("note", 
