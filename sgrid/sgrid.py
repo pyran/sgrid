@@ -4,6 +4,7 @@ from sgrid.location import Location
 from sgrid.player import Player
 from sgrid.item import Item
 import json
+import sys
 
 HEADING = \
 """\n*****This is a 2 location demo. You can only go north/south, look, look item, 
@@ -20,7 +21,10 @@ def run_game(player):
         for i in reply:
             if not first:
                 print('\n>')
-            player.execprint(i)
+            rc = player.execprint(i)
+            # Quit if execprint returns a 'quit' code.
+            if (rc == -1):
+                sys.exit(0) 
             first = False
 
     if __name__ == '__main__':

@@ -1,7 +1,5 @@
 # /usr/bin/env python3
 
-import sys
-
 # Classes for the game
 class GameObj(object):
     """This parent class contains the descriptions and inventory methods that

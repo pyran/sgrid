@@ -206,7 +206,7 @@ class Player(GameObj):
 
     def _quit(self, args):
         print("Thanks for playing.")
-        return sys.exit(0)
+        return -1
 
     def execprint(self, user_input):
         """This master function parses the user input, and passes the commands
@@ -253,11 +253,11 @@ class Player(GameObj):
                 else:
                     func = verblist[line[1]]
                     args = line[2:]
-                    func(args)
+                    return func(args)
             else:
                 func = verblist[line[0]]  # look for first word in verblist
                 args = line[1:]  # What follows first word are arguments
-                func(args)  # use the arguments for the verb function
+                return func(args)  # use the arguments for the verb function
 
 
 if __name__ == '__main__':
