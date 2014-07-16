@@ -10,7 +10,7 @@ class Location(GameObj):
                     access = True, blocked_msg = "", 
                     unblocked_msg = ""):
 
-        GameObj.__init__(self, name, description, first_description)
+        super().__init__(name, description, first_description)
         self.access = access
         self.inventory = inventory
         self.blockedMsg = blocked_msg

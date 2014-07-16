@@ -5,7 +5,7 @@ class Item(GameObj):
     """This class is for handling Items in the game"""
     def __init__(self, name, description, first_description, synonyms=[], 
                 is_container = False, can_take = True, cannot_take_msg =""):
-        GameObj.__init__(self, name, description, first_description)
+        super().__init__(name, description, first_description)
         self.synonyms = synonyms
         self.isContainer = is_container
         self.combine = []

@@ -6,7 +6,7 @@ class Player(GameObj):
     functions for the player"""
     def __init__(self, name, description, first_description,
                  current_location, dungeon_map):
-        GameObj.__init__(self, name, description, first_description)
+        super().__init__(name, description, first_description)
         self.currLoc = current_location
         self.dmap = dungeon_map
 
