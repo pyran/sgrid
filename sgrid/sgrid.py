@@ -32,27 +32,35 @@ def run_game(player):
 
 if __name__ == '__main__':
     # Test code
-    twig = Item('twig', 'a nice sized twig', 'hmm... a twig',
-                    ['wood', 'twig', 'stick'])
-    berries = Item('berries', 'two small berries', 'two tiny berries', 
-                    ['round', 'circles','berry', 'berries, balls'])
+    twig = Item(name = 'twig', description = 'a nice sized twig',
+                    first_description = 'hmm... a twig',
+                    synonyms = ['wood', 'twig', 'stick'])
+    berries = Item(name = 'berries', description = 'two small berries',
+                    first_description = 'two tiny berries', 
+                    synonyms = ['round', 'circles','berry', 'berries, balls'])
 
-    undies = Item('undies', 'white undies', 'white undies with skid-marks', 
-                    ['underwear', 'undies', 'boxers'], is_container = True)
-    chest = Item('chest', 'an ornate chest', 'a beautiful crusty chest',
-                    ['chest', 'box', 'container'], is_container = True, can_take = False, 
+    undies = Item(name = 'undies', description = 'white undies',
+                    first_description = 'white undies with skid-marks', 
+                    synonyms = ['underwear', 'undies', 'boxers'],
+                    is_container = True)
+    chest = Item(name = 'chest', description = 'an ornate chest',
+                    first_description = 'a beautiful crusty chest',
+                    synonyms = ['chest', 'box', 'container'],
+                    is_container = True, can_take = False, 
                     cannot_take_msg = "This thing is heavy. I ain't takin' it no where. ")
-    sword = Item("sword", 'a small sword', 'a tiny sword made for tiny dudes',
-                    ['sword', 'needle', 'prick', 'knife', 'dagger'])
-    note = Item("note", 
-        """The note says:
+    sword = Item(name = "sword", description = 'a small sword',
+                    first_description = 'a tiny sword made for tiny dudes',
+                    synonyms = ['sword', 'needle', 'prick', 'knife', 'dagger'])
+
+    note = Item(name = "note", 
+        description = """The note says:
         Hi Dick,
 
         I hope you enjoyed playing with yourself.
 
         -Dick""",
-        "This note looks familiar... it may warrant another inspection.",
-        ['note', 'letter', 'message', 'paper'])
+        first_description = "This note looks familiar... it may warrant another inspection.",
+        synonyms = ['note', 'letter', 'message', 'paper'])
     
     undies.addInv(twig)
     undies.addInv(berries)
@@ -60,12 +68,14 @@ if __name__ == '__main__':
     caveInv = [chest]
     clearingInv = [sword]
 
-    Cave = Location('Cave', 
-        'A dimly lit cave. You can see a clearing South of here.', 
-        'This cave sucks.', caveInv)
-    Clearing = Location('Clearing', 
-        'This clearing looks stupid. It looks as if there is a cave North of here.', 
-        'You are in an expansive clearing. It looks as if there is a cave North of here.', clearingInv)
+    Cave = Location(name = 'Cave', 
+        description = 'A dimly lit cave. You can see a clearing South of here.', 
+        first_description = 'This cave sucks.',
+        inventory = caveInv)
+    Clearing = Location(name = 'Clearing', 
+        description = 'This clearing looks stupid. It looks as if there is a cave North of here.', 
+        first_description = 'You are in an expansive clearing. It looks as if there is a cave North of here.',
+        inventory = clearingInv)
     
     dungeon_map = {
     Clearing:  {'north': Cave},
