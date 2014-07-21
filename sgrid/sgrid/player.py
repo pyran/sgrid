@@ -51,7 +51,9 @@ class Player(GameObj):
             self.describeItem(args[0])
 
     def take(self, args):
+        # Local inventory + personal inventory
         mergedList = self.currLoc.getInv() + self.getInv()
+
         if len(args) == 1:  # if a simple take item command
             foundItem = False
             for item in mergedList:
@@ -76,10 +78,12 @@ class Player(GameObj):
             foundItem = False
             foundSubitem = False
             for item in mergedList:
-                if args[2] in item.getSynonyms():
+                # Finding the container item
+                if (args[2] == item.getName()) or (args[2] in item.getSynonyms()):
                     foundItem = True
                     for subitem in item.getInv():
-                        if args[0] in subitem.getSynonyms():
+                        # Finding the sub-item within the container
+                        if (args[0] == subitem.getName()) or (args[0] in subitem.getSynonyms()):
                             foundSubitem = True
                             if args[1] == 'from' or args[1] == 'in' or args[1] == 'on':
                                 if args[2] in item.getSynonyms():
