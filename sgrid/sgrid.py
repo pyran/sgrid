@@ -37,7 +37,7 @@ if __name__ == '__main__':
                     synonyms = ['wood', 'twig', 'stick'])
     berries = Item(name = 'berries', description = 'two small berries',
                     first_description = 'two tiny berries', 
-                    synonyms = ['round', 'circles','berry', 'berries, balls'])
+                    synonyms = ['round', 'circles','berry', 'berries', 'balls'])
 
     undies = Item(name = 'undies', description = 'white undies',
                     first_description = 'white undies with skid-marks', 
