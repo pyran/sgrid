@@ -5,6 +5,8 @@ from sgrid.player import Player
 from sgrid.item import Item
 import json
 import sys
+import pickle
+import argparse
 
 HEADING = \
 """\n*****This is a 2 location demo. You can only go north/south, look, look item, 
@@ -25,12 +27,17 @@ def run_game(player):
             # Quit if execprint returns a 'quit' code.
             if (rc == -1):
                 sys.exit(0) 
+            elif (rc == -2):
+                with open("save.p", "wb") as f:
+                    pickle.dump(player, f)
+                sys.exit(0)
+
             first = False
 
     if __name__ == '__main__':
         input('\n>')
 
-if __name__ == '__main__':
+def new_game():
     # Test code
     twig = Item(name = 'twig', description = 'a nice sized twig',
                     first_description = 'hmm... a twig',
@@ -98,3 +105,21 @@ if __name__ == '__main__':
 
     # Maybe can add a look self
     run_game(hero)
+
+def load_game(loadfile):
+    with open(loadfile, "rb") as f:
+        hero = pickle.load(f)
+        run_game(hero)
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--load", help="load a game from the specified file")
+    args = parser.parse_args()
+
+    # Load a game if specified
+    if args.load:
+        load_game(args.load)
+
+    # Start a new game by default
+    new_game()
