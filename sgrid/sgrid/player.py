@@ -212,6 +212,9 @@ class Player(GameObj):
         print("Thanks for playing.")
         return -1
 
+    def _save(self, args):
+        return -2
+
     def execprint(self, user_input):
         """This master function parses the user input, and passes the commands
         to their respective action and movement functions that the player can
@@ -227,6 +230,7 @@ class Player(GameObj):
         # can't use 'd' because of going down
         'inventory': self.inven, 'i': self.inven, 'items': self.inven, #'die': die,
         'quit': self._quit,
+        'save': self._save,
         # 'help': _help,
         # 'save': save, 'restore': restore,
         'north': self.north, 'n': self.north,
