@@ -6,7 +6,7 @@ class Location(GameObj):
     the dungeon map.  It will include an additional adjacent location dictionary
     that will be used to form a graph based game map."""
 
-    def __init__(self, name, description, first_description, inventory, 
+    def __init__(self, name, description, first_description, inventory = None, 
                     access = True, blocked_msg = "", 
                     unblocked_msg = ""):
 
