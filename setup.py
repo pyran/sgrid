@@ -8,7 +8,7 @@
 from cx_Freeze import setup, Executable
 # NOTE: you can include any other necessary external imports here aswell
  
-includefiles = [gameobjs.py] # include any files here that you wish
+includefiles = [] # include any files here that you wish
 includes = []
 excludes = []
 packages = []
