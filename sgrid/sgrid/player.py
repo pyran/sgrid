@@ -2,6 +2,7 @@
 from .gameobj import GameObj
 from time import sleep
 
+
 class Player(GameObj):
     """This class contains all the movement, current location and action
     functions for the player"""
@@ -10,6 +11,36 @@ class Player(GameObj):
         super().__init__(name, description, first_description)
         self.currLoc = current_location
         self.dmap = dungeon_map
+
+        self.verblist = {
+        'take': self.take, 'get': self.take, 'pick': self.take, 
+        'hold': self.take,
+        # 'drop': drop, 'throw': drop, 'toss': drop,
+        'look': self.examine, 'l': self.examine, 'examine': self.examine,
+        'x': self.examine, 'read': self.examine, 'r': self.examine,
+        'describe': self.examine,
+        # 'combine': combine, 'use': combine,
+        # can't use 'd' because of going down
+        'inventory': self.inven, 'i': self.inven, 'items': self.inven, #'die': die,
+        'quit': self._quit,
+        'save': self._save,
+        # 'help': _help,
+        # 'save': save, 'restore': restore,
+        'north': self.north, 'n': self.north,
+        'south': self.south, 's': self.south,
+        'east': self.east, 'e': self.east,
+        'west': self.west, 'w': self.west,
+        'northeast': self.northeast, 'ne': self.northeast,
+        'southeast': self.southeast, 'se': self.southeast,
+        'northwest': self.northwest, 'nw': self.northwest,
+        'southwest': self.southwest, 'sw': self.southwest,
+        'up': self.up, 'u': self.up,
+        'down': self.down, 'd': self.down,
+        'in': self._in, 'on': self._in, 'enter': self._in,
+        'out': self.out,'off': self.out,  'exit': self.out,
+        'open': self.open, 'close': self.close,
+        'stand': self.stand
+        }
 
     def describeLoc(self):
         """Check if the new current location has been visited, if False,
@@ -158,6 +189,9 @@ class Player(GameObj):
             if self.currLoc.checkSeen() == False:
                 self.currLoc.printDesc()
 
+    def stand(self, args):
+        self.standing = True
+
     def north(self, args):
         self.move('north')
 
@@ -229,33 +263,6 @@ class Player(GameObj):
         """This master function parses the user input, and passes the commands
         to their respective action and movement functions that the player can
         perform"""
-        verblist = {
-        'take': self.take, 'get': self.take, 'pick': self.take, 
-        'hold': self.take,
-        # 'drop': drop, 'throw': drop, 'toss': drop,
-        'look': self.examine, 'l': self.examine, 'examine': self.examine,
-        'x': self.examine, 'read': self.examine, 'r': self.examine,
-        'describe': self.examine,
-        # can't use 'd' because of going down
-        'inventory': self.inven, 'i': self.inven, 'items': self.inven, #'die': die,
-        'quit': self._quit,
-        'save': self._save,
-        # 'help': _help,
-        # 'save': save, 'restore': restore,
-        'north': self.north, 'n': self.north,
-        'south': self.south, 's': self.south,
-        'east': self.east, 'e': self.east,
-        'west': self.west, 'w': self.west,
-        'northeast': self.northeast, 'ne': self.northeast,
-        'southeast': self.southeast, 'se': self.southeast,
-        'northwest': self.northwest, 'nw': self.northwest,
-        'southwest': self.southwest, 'sw': self.southwest,
-        'up': self.up, 'u': self.up,
-        'down': self.down, 'd': self.down,
-        'in': self._in, 'on': self._in, 'enter': self._in,
-        'out': self.out,'off': self.out,  'exit': self.out,
-        'open': self.open, 'close': self.close,
-        }
 
         line = user_input.split()
         for c in ',:':
@@ -263,7 +270,7 @@ class Player(GameObj):
                 c)  # Also, get rid of `c` that's been there first
         if line:
             verb = line[0] # First item in line is usually the verb unless it's 'go'
-            if verb not in verblist and verb != 'go':
+            if verb not in self.verblist and verb != 'go':
                 if len(line) > 1:
                     # We have an issue here.  Using line[1] doesn't work for a two-word item (i.e. "red button").
                     gameObject = self.findObject(" ".join(line[1:])) # second item following the verb is the game object
@@ -273,14 +280,14 @@ class Player(GameObj):
                         print("I don't see {} here.".format(line[1]))
             elif verb == 'go':
                 verb2 = line[1] # if the first verb is 'go' look to next argument
-                if verb2 not in verblist:
+                if verb2 not in self.verblist:
                     print("I don't understand what you want me to go do.")
                 else:
-                    func = verblist[line[1]]
+                    func = self.verblist[line[1]]
                     args = line[2:]
                     return func(args)
             else:
-                func = verblist[line[0]]  # look for first word in verblist
+                func = self.verblist[line[0]]  # look for first word in verblist
                 args = line[1:]  # What follows first word are arguments
                 return func(args)  # use the arguments for the verb function
 
