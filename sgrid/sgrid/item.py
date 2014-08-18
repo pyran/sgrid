@@ -34,7 +34,7 @@ class Item(GameObj):
             print (self.firstDesc + extraDesc)
             self.seen = True
 
-    def checkContainer(self):
+    def checkIsContainer(self):
         return self.isContainer
 
     def open(self):

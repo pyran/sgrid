@@ -122,6 +122,19 @@ class Player(GameObj):
         else: # incomplete command
             print("I don't understand. What do I need to take from?")
 
+    # will need to change take item to use this
+    def findObject(self, itemStr):
+        mergedList = self.currLoc.getInv() + self.getInv()
+        foundItem = False  # Keep track if item is found for player feedback
+        # loop through merged list of player inventory and location inventory
+        for item in mergedList:  # for every item object found
+            # check if itemStr matches the item name or it's synonyms
+            if (itemStr == item.getName()) or (itemStr in item.getSynonyms()):  
+                foundItem = True  # if there is a match, then item found
+                return item
+        if not foundItem:  # give player feedback, if item wasn't found
+            return None
+
     def inven(self, args):
         print("I have:")
         if len(self.getInv()) < 1:
@@ -230,10 +243,13 @@ class Player(GameObj):
 
     def _quit(self, args):
         print("Thanks for playing.")
-        return -1
+        return "quit game"
 
     def _save(self, args):
-        return -2
+        return "save game"
+
+    def printText(self, text):
+        print(text)
 
     def execprint(self, user_input):
         """This master function parses the user input, and passes the commands
@@ -273,10 +289,17 @@ class Player(GameObj):
             line = c.join(line).split(
                 c)  # Also, get rid of `c` that's been there first
         if line:
-            if line[0] not in verblist and line[0] != 'go':
-                print("I don't understand that.")
-            elif line[0] == 'go':
-                if line[1] not in verblist:
+            verb = line[0] # First item in line is usually the verb unless it's 'go'
+            if verb not in verblist and verb != 'go':
+                if len(line) > 1:
+                    gameObject = self.findObject(line[1]) # second item following the verb is the game object
+                    if gameObject:
+                        gameObject.getEventManager().serve(line)
+                    else:
+                        print("I don't see {} here.".format(line[1]))
+            elif verb == 'go':
+                verb2 = line[1] # if the first verb is 'go' look to next argument
+                if verb2 not in verblist:
                     print("I don't understand what you want me to go do.")
                 else:
                     func = verblist[line[1]]

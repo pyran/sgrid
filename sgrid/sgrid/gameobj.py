@@ -1,4 +1,6 @@
-# /usr/bin/env python3
+#! /usr/bin/env python3
+
+from .events import EventManager 
 
 # Classes for the game
 class GameObj(object):
@@ -18,6 +20,10 @@ class GameObj(object):
         self.inventory = []
         self.visible = True
         self.seen = False
+        self.eventManager = EventManager()
+
+    def getEventManager(self):
+        return self.eventManager
 
     def getName(self):
         return self.name
@@ -64,12 +70,13 @@ class GameObj(object):
         """Checks to see if game object is visible to player"""
         return self.visible
 
-    def isVisible(self):
+    def setVisible(self):
         """Set game object visible to player"""
         self.visible = True
 
-    def invisible(self):
+    def setInvisible(self):
         """Set game object as invisible to player."""
+        self.visible = False
 
     def checkSeen(self):
         """Checks to see if the item/location/player has been seen by the user before"""

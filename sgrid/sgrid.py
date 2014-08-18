@@ -3,6 +3,7 @@
 from sgrid.location import Location
 from sgrid.player import Player
 from sgrid.item import Item
+from sgrid.events import *
 import json
 import sys
 import pickle
@@ -23,15 +24,14 @@ def run_game(player):
         for i in reply:
             if not first:
                 print('\n>')
-            rc = player.execprint(i)
+            capturedOutput = player.execprint(i)
             # Quit if execprint returns a 'quit' code.
-            if (rc == -1):
+            if (capturedOutput == "quit game"):
                 sys.exit(0) 
-            elif (rc == -2):
+            elif (capturedOutput == "save game"):
                 with open("save.p", "wb") as f:
                     pickle.dump(player, f)
                 sys.exit(0)
-
             first = False
 
     if __name__ == '__main__':
@@ -75,6 +75,8 @@ def new_game():
     caveInv = [chest]
     clearingInv = [sword]
 
+
+
     Cave = Location(name = 'Cave', 
         description = 'A dimly lit cave. You can see a clearing South of here.', 
         first_description = 'This cave sucks.',
@@ -93,6 +95,9 @@ def new_game():
     hero = Player("Dick", "I am a detective with a phallic name.", 
         "Whoa, I can see myself.", Clearing, dungeon_map)
     hero.addInv(undies)
+
+    pushChestEvent = Event("push", "chest", hero.printText, "You moved the chest a millimeter. Good job.")
+    chest.getEventManager().addEvent([pushChestEvent])
 
     # myVar = {'name':'Room 2', 'description':'a big ass ROOM.', 
     # 'firstDescription':'wow such big.'}
