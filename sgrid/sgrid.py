@@ -96,7 +96,11 @@ def new_game():
         "Whoa, I can see myself.", Clearing, dungeon_map)
     hero.addInv(undies)
 
-    pushChestEvent = Event("push", "chest", hero.printText, "You moved the chest a millimeter. Good job.")
+    paragraphList = ["You push as hard as you can against the chest!", 
+                        "Your face flushes red as you throw your whole body into it...",
+                        "....", "....",
+                        "You shit your pants, but at least you moved the chest a millimeter. Good Job."]
+    pushChestEvent = Event("push", ["chest"], hero.printText, [paragraphList, 2])
     chest.getEventManager().addEvent([pushChestEvent])
 
     # myVar = {'name':'Room 2', 'description':'a big ass ROOM.', 

@@ -66,6 +66,20 @@ class GameObj(object):
     def getInv(self):
         return self.inventory
 
+    def searchInventory(self, itemStr):
+        """This function takes a string, seaches the object's inventory
+        and returns the object the string refers to. If not found, returns
+        None"""
+        found = False
+        invList = self.getInv()
+        if invList: # if list not empty
+            for item in invList:
+                if (itemStr == item.getName()) or (itemStr in item.getSynonyms()):  
+                    foundItem = True  # if there is a match, then item found
+                    return item
+        if not found:
+            return None
+
     def checkVisible(self):
         """Checks to see if game object is visible to player"""
         return self.visible

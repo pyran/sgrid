@@ -1,5 +1,6 @@
 # /usr/bin/env python3
 from .gameobj import GameObj
+from time import sleep
 
 class Player(GameObj):
     """This class contains all the movement, current location and action
@@ -50,80 +51,10 @@ class Player(GameObj):
         else:
             self.describeItem(args[0])
 
-    def simpleTake(self, args):
-        "Private method for taking items directly from location inventory."
-        itemStr = args[0]  # args[0] is the item string from user input
-        mergedList = self.currLoc.getInv() + self.getInv()
-        foundItem = False  # Keep track if item is found for player feedback
-
-        # loop through merged list of player inventory and location inventory
-        for item in mergedList:  # for every item object found
-            # check if itemStr matches the item name or it's synonyms
-            if (itemStr == item.getName()) or (itemStr in item.getSynonyms()):  
-                foundItem = True  # if there is a match, then item found
-                if item.checkCanTake(): # first check if item is takable
-                    # next check if the item is in the location inventory
-                    if item in self.currLoc.getInv(): 
-                        self.addInv(item)  # first add item to player inv
-                        self.currLoc.rmItem(item)  # then remove it from loc
-                        print("I placed the {} into my inventory.".format(
-                            item.getName()))
-                    elif item in self.getInv(): # if item already in inventory
-                        print("I already have the {}.".format(itemStr))
-                    break  # if item taken, leave loop
-                else:  # This means the item can't be taken, display message
-                    print(item.getCannotTakeMsg())                   
-        if not foundItem:  # give player feedback, if item wasn't found
-            print("I don't see the {} here.".format(itemStr))
-
-    def nestedTake(self, args):
-        "Private method for taking an item from a container item's inventory."
-        # Define the args and lists for readability
-        nestedItemStr = args[0]
-        preposition = args[1]
-        containerItemStr = args[2]
-        mergedList = self.currLoc.getInv() + self.getInv()
-
-        # Keep track of items found for player feedback
-        foundContainerItem = False
-        foundNestedItem = False
-
-        # Loop through items in player and location inventory
-        for containerItem in mergedList:
-            # Check if the container item name or synonym matches the given user string
-            if (containerItemStr == containerItem.getName()) or (containerItemStr in containerItem.getSynonyms()):
-                foundContainerItem = True
-                # now loop through all the nested items within the container inv
-                for nestedItem in containerItem.getInv():
-                    # Check if the nested item name or synonym matches the given user string
-                    if (nestedItemStr == nestedItem.getName()) or (nestedItemStr in nestedItem.getSynonyms()):
-                        foundNestedItem = True
-                        if (preposition == 'from') or (preposition == 'in') or (preposition == 'on'):
-                            self.addInv(nestedItem)
-                            containerItem.rmItem(nestedItem)
-                            print("I took the {} from the {}".format(
-                                nestedItem.getName(), containerItem.getName()))
-                        else:
-                            print("Uh... do you mean to take that 'from' something?")
-        # User feedback. If the container item in question was not found
-        if not foundContainerItem:
-            print("I didn't see the {} here.".format(containerItemStr))
-        # If the nested item was not found in the container item...
-        if not foundNestedItem and foundContainerItem:
-            print("I didn't see the {} in the {}.".format(nestedItem, containerItem))
-
-    def take(self, args):
-        # Local inventory + personal inventory
-        if len(args) == 1:  # if a simple take; take directly from location
-            self.simpleTake(args)
-        # To take a nested item "Take subitem from item"
-        elif len(args) > 2:
-            self.nestedTake(args)
-        else: # incomplete command
-            print("I don't understand. What do I need to take from?")
-
-    # will need to change take item to use this
     def findObject(self, itemStr):
+        """This function takes the string name of an item and searches
+        through the current location and player inventory and returns the
+        object.  If the object isn't found, then returns None."""
         mergedList = self.currLoc.getInv() + self.getInv()
         foundItem = False  # Keep track if item is found for player feedback
         # loop through merged list of player inventory and location inventory
@@ -134,6 +65,61 @@ class Player(GameObj):
                 return item
         if not foundItem:  # give player feedback, if item wasn't found
             return None
+
+    def simpleTake(self, args):
+        "Private method for taking items directly from location inventory."
+        itemStr = args[0]  # args[0] is the item string from user input
+        # takes itemStr and returns the item if found, else returns None
+        item = self.findObject(itemStr)
+        if item:
+            if item.checkCanTake(): # first check if item is takable
+                # next check if the item is in the location inventory
+                if item in self.currLoc.getInv(): 
+                    self.addInv(item)  # first add item to player inv
+                    self.currLoc.rmItem(item)  # then remove it from loc
+                    print("I placed the {} into my inventory.".format(
+                        item.getName()))
+                elif item in self.getInv(): # if item already in inventory
+                    print("I already have the {}.".format(itemStr))
+            else:  # This means the item can't be taken, display message
+                print(item.getCannotTakeMsg())                   
+        else:  # give player feedback, if item wasn't found
+            print("I don't see the {} here.".format(itemStr))
+
+    def nestedTake(self, args):
+        "Private method for taking an item from a container item's inventory."
+        # Define the args and lists for readability
+        nestedItemStr = args[0]
+        preposition = args[1]
+        containerItemStr = args[2]
+        container = self.findObject(containerItemStr) # Find the container item
+        if container: # if found object
+            # Find nestedItem, by using search inventory function
+            nestedItem = container.searchInventory(nestedItemStr)
+            if nestedItem:
+                if (preposition == 'from') or (preposition == 'in') or (preposition == 'on'):
+                    self.addInv(nestedItem)
+                    container.rmItem(nestedItem)
+                    print("I took the {} from the {}".format(
+                        nestedItem.getName(), container.getName()))
+                else:
+                    print("Uh... do you mean to take that 'from' something?")
+            else:
+                # If the nested item was not found in the container item...
+                print("I didn't see the {} in the {}.".format(nestedItemStr, containerItemStr))
+        # User feedback. If the container item in question was not found
+        else:  # Didn't find container item (container == None)
+            print("I didn't see the {} here.".format(containerItemStr))
+
+    def take(self, args):
+        # Local inventory + personal inventory
+        if len(args) == 1:  # if a simple take; take directly from location
+            self.simpleTake(args)
+        # To take a nested item "Take subitem from item"
+        elif len(args) > 2:
+            self.nestedTake(args)
+        else: # incomplete command
+            print("I don't understand. What do I need to take from?")
 
     def inven(self, args):
         print("I have:")
@@ -211,34 +197,25 @@ class Player(GameObj):
         self.move('out')
 
     def open(self, args):
-        # TODO: Check for usage
-        # combine the scope of the current location and your inventory
-        mergedList = self.currLoc.getInv() + self.getInv()
-        itemStr = args[0]  # args[0] is the user input; item string
-        for item in mergedList:
-            if (itemStr == item.getName()) or (itemStr in item.getSynonyms()):
-                if item.checkIsContainer():
-                    item.open()
-                else:
-                    print("You can't open that.")
-                break # breaking out of loop skips the loops else statemnt
-        else:  # ** this one is skipped when breaking
+        itemStr = args[0]
+        item = self.findObject(itemStr)
+        if item:
+            if item.checkIsContainer():
+                item.open()
+            else:
+                print("You can't open that.")
+        else:
             print("I don't see that here.")
 
     def close(self,args):
-        # TODO: Check for usage
-        # combine the scope of the current location and your inventory
-        mergedList = self.currLoc.getInv() + self.getInv()
-        itemStr = args[0]  # args[0] is the user input; item string
-        for item in mergedList:
-            if (itemStr == item.getName()) or (itemStr in item.getSynonyms()):
-                if item.checkIsContainer():
-                    item.close()
-                else:
-                    print("You can't close that.")
-                break # breaking out of loop skips the loops else statemnt **
-            
-        else:  # ** this one is skipped when breaking
+        itemStr = args[0]
+        item = self.findObject(itemStr)
+        if item:
+            if item.checkIsContainer():
+                item.close()
+            else:
+                print("You can't close that.")
+        else: 
             print("I don't see that here.")
 
     def _quit(self, args):
@@ -247,9 +224,6 @@ class Player(GameObj):
 
     def _save(self, args):
         return "save game"
-
-    def printText(self, text):
-        print(text)
 
     def execprint(self, user_input):
         """This master function parses the user input, and passes the commands
@@ -262,7 +236,6 @@ class Player(GameObj):
         'look': self.examine, 'l': self.examine, 'examine': self.examine,
         'x': self.examine, 'read': self.examine, 'r': self.examine,
         'describe': self.examine,
-        # 'combine': combine, 'use': combine,
         # can't use 'd' because of going down
         'inventory': self.inven, 'i': self.inven, 'items': self.inven, #'die': die,
         'quit': self._quit,
@@ -292,7 +265,8 @@ class Player(GameObj):
             verb = line[0] # First item in line is usually the verb unless it's 'go'
             if verb not in verblist and verb != 'go':
                 if len(line) > 1:
-                    gameObject = self.findObject(line[1]) # second item following the verb is the game object
+                    # second item following the verb is the game object
+                    gameObject = self.findObject(line[1]) 
                     if gameObject:
                         gameObject.getEventManager().serve(line)
                     else:
@@ -309,6 +283,31 @@ class Player(GameObj):
                 func = verblist[line[0]]  # look for first word in verblist
                 args = line[1:]  # What follows first word are arguments
                 return func(args)  # use the arguments for the verb function
+
+    # These are special player actions reserved for the event system and are not
+    # included in the basic verb list above; they are optional
+
+    def printText(self, textList, waitTime=0):
+        """Function to print text to screen. Enter text as a list of paragraphs.
+        The optional waitTime argument (seconds) allows display of text to be
+        time delayed for dramatic effect. Use waitTime=0 for immediate."""
+        for text in textList:
+            print(text)
+            sleep(waitTime)
+            print("")
+
+
+    # def combine(self):
+
+    # def push(self):
+
+    # def pull(self):
+
+    # def sit(self):
+
+    # def stand(self):
+
+    # def crawl(self):
 
 
 if __name__ == '__main__':
