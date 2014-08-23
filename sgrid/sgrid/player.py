@@ -265,8 +265,8 @@ class Player(GameObj):
             verb = line[0] # First item in line is usually the verb unless it's 'go'
             if verb not in verblist and verb != 'go':
                 if len(line) > 1:
-                    # second item following the verb is the game object
-                    gameObject = self.findObject(line[1]) 
+                    # We have an issue here.  Using line[1] doesn't work for a two-word item (i.e. "red button").
+                    gameObject = self.findObject(" ".join(line[1:])) # second item following the verb is the game object
                     if gameObject:
                         gameObject.getEventManager().serve(line)
                     else:
