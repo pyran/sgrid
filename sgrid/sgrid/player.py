@@ -1,6 +1,6 @@
 # /usr/bin/env python3
 from .gameobj import GameObj
-from time import sleep
+from .utility import Utility
 
 
 class Player(GameObj):
@@ -11,6 +11,7 @@ class Player(GameObj):
         super().__init__(name, description, first_description)
         self.currLoc = current_location
         self.dmap = dungeon_map
+        self.utility = Utility()
 
         self.verblist = {
         'take': self.take, 'get': self.take, 'pick': self.take, 
@@ -293,18 +294,6 @@ class Player(GameObj):
 
     # These are special player actions reserved for the event system and are not
     # included in the basic verb list above; they are optional
-
-    # TODO: We should make this a utility function, it doesn't really make sense
-    # as part of the Hero class.
-    def printText(self, textList, waitTime=0):
-        """Function to print text to screen. Enter text as a list of paragraphs.
-        The optional waitTime argument (seconds) allows display of text to be
-        time delayed for dramatic effect.  Use waitTime=0 for immediate."""
-        for text in textList:
-            print(text)
-            sleep(waitTime)
-            print("")
-
 
     # def combine(self):
 

@@ -8,6 +8,8 @@ import json
 import sys
 import pickle
 import argparse
+import os
+from sgrid.utility import Utility
 
 HEADING = \
 """\n*****This is a 2 location demo. You can only go north/south, look, look item, 
@@ -16,6 +18,7 @@ inventory and quit. Not all items can be opened, or taken.*****\n"""
 
 # Function to run the game
 def run_game(player):
+    os.system('cls' if os.name == 'nt' else 'clear')
     print(HEADING)
     player.getCurrLoc().printFirst()
     while True:
@@ -39,6 +42,9 @@ def run_game(player):
 
 def new_game():
     # Test code
+    # import utility class
+    utility = Utility()
+
     twig = Item(name = 'twig', description = 'a nice sized twig',
                     first_description = 'hmm... a twig',
                     synonyms = ['wood', 'twig', 'stick'])
@@ -100,7 +106,7 @@ def new_game():
                         "Your face flushes red as you throw your whole body into it...",
                         "....", "....",
                         "You shit your pants, but at least you moved the chest a millimeter. Good Job."]
-    pushChestEvent = Event("push", ["chest"], hero.printText, [paragraphList, 2])
+    pushChestEvent = Event("push", ["chest"], utility.waitToPrint, [paragraphList, 2])
     chest.getEventManager().addEvent([pushChestEvent])
 
     # myVar = {'name':'Room 2', 'description':'a big ass ROOM.', 

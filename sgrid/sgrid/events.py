@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
-from inspect import getargspec
-# Will need to make the argsStr into a list of arguments, right now it handles just one.
+from .utility import Utility
+
 class Event(object):
 	def __init__(self, funcStr, argsStrList, function, argsList):
 		# TODO: Fix these variable names.  They are really confusing.

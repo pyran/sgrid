@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-from .events import EventManager 
+from .events import EventManager
+from .utility import Utility
 
 # Classes for the game
 class GameObj(object):
@@ -21,6 +22,7 @@ class GameObj(object):
         self.visible = True
         self.seen = False
         self.eventManager = EventManager()
+        self.utility = Utility()
 
     def getEventManager(self):
         return self.eventManager
@@ -45,14 +47,14 @@ class GameObj(object):
 
         if (self.seen):
         # If the player has been here before, print the normal description.
-            print(self.desc + extraDesc)
+            self.utility.formatPrint(self.desc + extraDesc)
         else:
         # If the player hasn't been here before, give them the first description.
-            print (self.firstDesc + extraDesc)
+            self.utility.formatPrint(self.firstDesc + extraDesc)
             self.seen = True
 
     def printFirst(self):
-        print(self.firstDesc)
+        self.utility.formatPrint(self.firstDesc)
 
     def addInv(self, item):
         self.inventory.append(item)

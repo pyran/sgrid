@@ -1,1 +1,1 @@
-__all__ = ["item", "location", "player", "gameobj", "events.py"]
+__all__ = ["item", "location", "player", "gameobj", "events.py", "utility.py"]

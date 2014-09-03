@@ -1,5 +1,6 @@
 # /usr/bin/env python3
 from .gameobj import GameObj
+from .utility import Utility
 
 class Item(GameObj):
     """This class is for handling Items in the game"""
@@ -12,6 +13,7 @@ class Item(GameObj):
         self.isOpened = False
         self.canTake = can_take
         self.cannotTakeMsg = cannot_take_msg
+        self.utility = Utility()
 
     def getSynonyms(self):
         return self.synonyms
@@ -28,10 +30,10 @@ class Item(GameObj):
 
         if (self.seen):
         # If the player has been here before, print the normal description.
-            print(self.desc + extraDesc)
+            self.utility.formatPrint(self.desc + extraDesc)
         else:
         # If the player hasn't been here before, give them the first description.
-            print (self.firstDesc + extraDesc)
+            self.utility.formatPrint(self.firstDesc + extraDesc)
             self.seen = True
 
     def checkIsContainer(self):
